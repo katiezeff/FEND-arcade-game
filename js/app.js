@@ -41,6 +41,7 @@ Enemy.prototype.render = function() {
 var Player = function(x,y) {
     this.x = 205;
     this.y = 401;
+    this.hasCollided = false;
     this.sprite = 'images/char-boy.png';
 
 };
@@ -71,21 +72,6 @@ var rowHeight = 83;
 
 
 
-// Citation needed - Method for Collision detection between entities
-//Used the axis-aligned collision detection logic
-Player.prototype.hasCollided = function(){
-    for(var i = 0; i < allEnemies.length; i++){
-        if( !(this.x > allEnemies[i].x + 50
-                 || this.x+50 < allEnemies[i].x
-                 || this.y > allEnemies[i].y + 50
-                 || this.y+50 < allEnemies[i].y) ){ 
-            break;
-        }
-        else
-            return false;
-    }
-    return true;
-}
 
 
 Player.prototype.gameReset = function() {
@@ -94,24 +80,48 @@ Player.prototype.gameReset = function() {
     this.hasCollided = false;
 };
 
+// Citation needed - Method for Collision detection between entities
+//Used the axis-aligned collision detection logic
+Player.prototype.checkCollisions = function() {
+    for(var i = 0; i < allEnemies.length; i++) {
+        if (this.x < allEnemies[i].x + 40 
+            && this.x + 40 > allEnemies[i].x 
+            && this.y < allEnemies[i].y + 30 
+            && this.y + 30 > allEnemies[i].y) { 
+            console.log("detected collision with enemy #:", i);
+            console.log(allEnemies.length);
+            this.hasCollided = true;
+            alert("Try Again");
+            this.gameReset();
+
+        }
+        else {
+            //console.log("I didn't hit shit.", i);
+        }
+    }
+};
+
+
+
+
 Player.prototype.update = function(dt) {
     // KZ when to update player for resetting game
     // KZ https://discussions.udacity.com/t/best-way-to-reset-game/40603/5
     // KZ call hasCollided function to check for collision with enemies
-   
-
-    if (this.y < -21) {
+    if(this.checkCollisions(allEnemies)){
+        console.log("I collided with something at: ", this.x, this.y);
         this.gameReset();
+    }
+    else if (this.y < -21) {
         // KZ "you win" modal when player reaches water
         alert("You Win!");
+        //console.log("I am resetting the game!")
+        this.y = 400;
+        //Player.prototype.gameReset();
     }
-    if(this.hasCollided()  )
-        this.gameReset();
-        
-    
-    else {}
-
-
+    else {
+        //console.log("Happy Dnce")
+    }
 };
 
 
@@ -129,19 +139,27 @@ Player.prototype.handleInput = function(key) {
         case 'left':
         if(this.x - columnWidth < 0){
             this.x = 0;
+            console.log(this.x, this.y);
+            this.checkCollisions(allEnemies[i]);
         }
         else {
             this.x -= columnWidth;
+            console.log(this.x, this.y);
+            this.checkCollisions(allEnemies[i]);
         }
 
         break;
 
         case 'right':
-        if(this.x += columnWidth >= rightBoundary){
+        console.log(this.x, this.y);
+        if((this.x + columnWidth) > rightBoundary){
             this.x = 400;
+            console.log("too far right",this.x, this.y);
+            this.checkCollisions(allEnemies[i]);
         }
         else {
             this.x += columnWidth;
+            this.checkCollisions(allEnemies[i]);
         }
 
         break;
@@ -149,10 +167,14 @@ Player.prototype.handleInput = function(key) {
         case 'up':
         if(this.y - rowHeight < -19){
             this.y = -22;
+            console.log(this.x, this.y);
+            this.checkCollisions(allEnemies);
             //reachedWater = true;
         }
         else {
             this.y -= rowHeight;
+            console.log(this.x, this.y);
+            this.checkCollisions(allEnemies);
         }
 
         break;
@@ -160,9 +182,13 @@ Player.prototype.handleInput = function(key) {
         case 'down':
         if(this.y + rowHeight >= bottomBoundary){
             this.y = 410;
+            console.log(this.x, this.y);
+            this.checkCollisions(allEnemies);
         }
         else {
             this.y += rowHeight;
+            console.log(this.x, this.y);
+            this.checkCollisions(allEnemies);
         }
 
         break;
@@ -183,10 +209,10 @@ Player.prototype.handleInput = function(key) {
 // Place all enemy objects in an array called allEnemies
 // KZ allEnemies sets 3 enemy positions and randomizes 2 more 
 //for a total of 5 bugs at all times
-var allEnemies = [ new Enemy(10, 65), new Enemy(62, 142) , new Enemy(30, 228)];
+var allEnemies = [new Enemy(30, 228), new Enemy(62, 142), new Enemy(10, 65)];
 for(var i = 0; i < 2; i++){
-    var enemyX = (Math.floor(Math.random() * (5 - 1)) + 1) * 99;
-    var enemyY = (Math.floor(Math.random() * (4 - 1)) + 1) * 78;
+    var enemyX = (Math.floor(Math.random() * (5 - 1)) + 1) * 101;
+    var enemyY = (Math.floor(Math.random() * (4 - 1)) + 1) * 83;
     var enemy = new Enemy(enemyX, enemyY);
     allEnemies.push(enemy);
 }
