@@ -50,7 +50,7 @@ var Player = function(x,y) {
 // KZ how much can the player move per keystroke?
 var rightBoundary = 505;
 // KZ leftBoundary is 0 in cartesian plane, only need right
-var bottomBoundary = 490;
+var bottomBoundary = 470;
 // KZ topBoundary is 0 in cartesian plane, only need bottom
 var reachedWater = function() {
     this.y === 0;
@@ -59,7 +59,7 @@ var reachedWater = function() {
 
 var columnWidth = 101;
 // KZ player should move across tiles one column at a time
-var rowHeight = 83;
+var rowHeight = 86;
 // KZ player should move across tiles one row at a time
 
 // KZ Code to make overlay visible when not using alert method
@@ -112,7 +112,7 @@ Player.prototype.update = function(dt) {
         console.log("I collided with something at: ", this.x, this.y);
         this.gameReset();
     }
-    else if (this.y < -21) {
+    else if (this.y < -9) {
         // KZ "you win" modal when player reaches water
         alert("You Win!");
         //console.log("I am resetting the game!")
@@ -165,8 +165,8 @@ Player.prototype.handleInput = function(key) {
         break;
 
         case 'up':
-        if(this.y - rowHeight < -19){
-            this.y = -22;
+        if(this.y - rowHeight < -1){
+            this.y = -10;
             console.log(this.x, this.y);
             this.checkCollisions(allEnemies);
             //reachedWater = true;
@@ -181,7 +181,7 @@ Player.prototype.handleInput = function(key) {
 
         case 'down':
         if(this.y + rowHeight >= bottomBoundary){
-            this.y = 410;
+            this.y = 405;
             console.log(this.x, this.y);
             this.checkCollisions(allEnemies);
         }
